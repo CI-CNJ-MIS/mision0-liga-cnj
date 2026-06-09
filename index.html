@@ -247,6 +247,47 @@ textarea{resize:vertical;min-height:90px;line-height:1.6}
 .firma{font-family:'Bangers',cursive;font-size:13px;letter-spacing:2px;
   color:var(--purple3);text-align:center;margin-top:.75rem;opacity:.7}
 </style>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIGAPNS2wVxVRh-Cl0TdTsD5zq_XdZ9Dg",
+      authDomain: "liga-cnj-quito.firebaseapp.com",
+      projectId: "liga-cnj-quito",
+      storageBucket: "liga-cnj-quito.firebasestorage.app",
+      messagingSenderId: "281280256681",
+      appId: "1:281280256681:web:d3574396ad31b5b8ba67b8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Función global para guardar respuestas
+    window.guardarRespuestas = async function(ST, correctas) {
+      try {
+        await addDoc(collection(db, "mision0_respuestas"), {
+          fecha: serverTimestamp(),
+          nombre: ST.name,
+          heroe: ST.hero ? ST.hero.name : '',
+          poder: ST.hero ? ST.hero.power : '',
+          respuesta_valeria: ST.valeria,
+          p1_ancla: ST.answers[0] !== undefined ? ST.answers[0] : '',
+          p2_ejes: ST.answers[1] !== undefined ? ST.answers[1] : '',
+          p3_intervenciones: ST.answers[2] !== undefined ? ST.answers[2] : '',
+          p4_sistema: ST.answers[3] !== undefined ? ST.answers[3] : '',
+          correctas_total: correctas + ' de 4',
+          autoeval_camino: ST.s1,
+          autoeval_empleo: ST.s2
+        });
+        console.log("Respuestas guardadas correctamente");
+      } catch(e) {
+        console.error("Error guardando respuestas:", e);
+      }
+    };
+  </script>
 </head>
 <body>
 <div class="bg-halftone"></div>
@@ -531,6 +572,10 @@ function nextQ(){
 
 function buildFinal(){
   var c=ST.answers.filter(function(a,i){return a===Q[i].ok}).length;
+  // Guardar en Firebase
+  if(typeof window.guardarRespuestas === 'function'){
+    window.guardarRespuestas(ST, c);
+  }
   var lvl=c<=1?'🔴 INICIAL':c===2?'🟡 BÁSICO':c===3?'🟢 ESTRATÉGICO':'💜 SISTÉMICO';
   var stars='';
   for(var i=0;i<4;i++){
