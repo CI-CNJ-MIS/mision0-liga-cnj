@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión 0 — Liga CNJ</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A0A0F;--ink2:#12121F;--ink3:#1C1C2E;
+  --purple:#7B2FBE;--purple2:#534AB7;--purple3:#B97FFF;
+  --gold:#FFD700;--gold2:#FFA500;
+  --red:#E63946;--cyan:#00F5FF;--green:#39FF14;
+  --white:#F0EEFF;--muted:#9B8FCC;
+  --panel-border:4px solid #0A0A0F;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{min-height:100%;background:var(--ink);color:var(--white);font-family:'Comic Neue',cursive;overflow-x:hidden}
+.bg-halftone{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(123,47,190,.18) 1px,transparent 1px);
+  background-size:20px 20px}
+.bg-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 20% 30%,rgba(123,47,190,.28) 0%,transparent 55%),
+             radial-gradient(ellipse at 80% 70%,rgba(0,245,255,.1) 0%,transparent 45%),
+             radial-gradient(ellipse at 50% 100%,rgba(255,165,0,.08) 0%,transparent 40%)}
+.bg-lines{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(135deg,rgba(255,215,0,.03) 1px,transparent 1px),
+                   linear-gradient(225deg,rgba(255,215,0,.03) 1px,transparent 1px);
+  background-size:40px 40px}
+
+/* LOGO */
+.logo-wrap{position:fixed;top:12px;left:16px;z-index:300;display:flex;align-items:center;gap:8px}
+.logo-wrap img{width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(185,127,255,.6))}
+.logo-txt{font-family:'Bangers',cursive;font-size:13px;letter-spacing:2px;color:var(--purple3);
+  text-shadow:0 0 10px rgba(185,127,255,.4)}
+
+/* PROGRESS */
+.pbar{position:fixed;top:0;left:0;right:0;z-index:200;display:none;
+  background:rgba(10,10,15,.95);border-bottom:3px solid rgba(123,47,190,.4);
+  padding:.55rem 1rem .55rem 68px;align-items:center;gap:.75rem;backdrop-filter:blur(8px)}
+.pbar.show{display:flex}
+.pdots{display:flex;gap:5px}
+.pd{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.12);
+  border:2px solid rgba(255,255,255,.15);transition:all .3s}
+.pd.done{background:var(--gold);border-color:var(--gold2)}
+.pd.active{background:var(--purple3);border-color:var(--purple);width:26px;border-radius:5px}
+.ptxt{font-family:'Bangers',cursive;font-size:12px;color:var(--gold);letter-spacing:2px}
+
+/* APP */
+.app{position:relative;z-index:1;min-height:100vh;display:flex;
+  flex-direction:column;align-items:center;justify-content:flex-start;padding:72px 1rem 3rem}
+
+/* SLIDES */
+.slide{display:none;width:100%;max-width:540px;flex-direction:column;align-items:center}
+.slide.active{display:flex;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{opacity:0;transform:scale(.93) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* VIDEO */
+#s-video{max-width:100%;padding:0;margin-top:-72px}
+.video-wrap{width:100%;height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;background:var(--ink);position:relative}
+.video-wrap video{width:100%;max-width:800px;max-height:80vh;object-fit:contain;
+  border:3px solid rgba(123,47,190,.4);border-radius:var(--r);box-shadow:0 0 40px rgba(123,47,190,.3)}
+.video-skip{position:absolute;bottom:24px;right:24px;font-family:'Bangers',cursive;
+  font-size:14px;letter-spacing:1px;color:var(--muted);background:rgba(0,0,0,.6);
+  border:2px solid rgba(255,255,255,.15);border-radius:6px;padding:.35rem .75rem;
+  cursor:pointer;transition:all .2s}
+.video-skip:hover{color:var(--white);border-color:var(--white)}
+.video-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.1)}
+.video-progress-bar{height:100%;background:var(--purple3);width:0%;transition:width .5s linear}
+
+/* PANELS */
+.panel{background:var(--white);border:var(--panel-border);border-radius:var(--r);
+  padding:1.25rem;width:100%;margin-bottom:1rem;position:relative;color:var(--ink)}
+.panel::before{content:'';position:absolute;inset:0;border-radius:var(--r);
+  background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.025) 3px,rgba(0,0,0,.025) 6px);
+  pointer-events:none}
+.panel-dark{background:var(--ink2);border:var(--panel-border);border-radius:var(--r);
+  padding:1.25rem;width:100%;margin-bottom:1rem;position:relative;box-shadow:5px 5px 0 var(--purple)}
+.panel-info{background:var(--ink2);border:4px solid var(--purple3);border-radius:var(--r);
+  padding:1.25rem;width:100%;margin-bottom:1rem;box-shadow:6px 6px 0 var(--purple)}
+
+/* BUBBLE */
+.bubble{background:var(--white);border:var(--panel-border);border-radius:16px;
+  padding:.75rem 1.1rem;position:relative;color:var(--ink);font-size:13px;
+  line-height:1.6;margin-bottom:1rem;width:100%}
+.bubble::after{content:'';position:absolute;bottom:-16px;left:24px;
+  border:8px solid transparent;border-top:8px solid var(--ink)}
+.bubble::before{content:'';position:absolute;bottom:-12px;left:26px;
+  border:6px solid transparent;border-top:6px solid var(--white)}
+
+/* TYPOGRAPHY */
+h1.comic{font-family:'Bangers',cursive;font-size:clamp(34px,8vw,60px);
+  letter-spacing:4px;line-height:1.05;text-align:center;margin-bottom:.5rem;
+  color:var(--white);text-shadow:-3px -3px 0 var(--ink),3px -3px 0 var(--ink),
+  -3px 3px 0 var(--ink),3px 3px 0 var(--ink),0 0 24px var(--purple3)}
+h1.comic span{color:var(--gold);text-shadow:-3px -3px 0 var(--ink),3px -3px 0 var(--ink),
+  -3px 3px 0 var(--ink),3px 3px 0 var(--ink),0 0 24px var(--gold2)}
+h2.comic{font-family:'Bangers',cursive;font-size:clamp(26px,6vw,42px);
+  letter-spacing:3px;line-height:1.05;text-align:center;margin-bottom:.75rem;
+  color:var(--white);text-shadow:-2px -2px 0 var(--ink),2px -2px 0 var(--ink),
+  -2px 2px 0 var(--ink),2px 2px 0 var(--ink)}
+h2.comic span{color:var(--gold)}
+.eyebrow{font-family:'Bangers',cursive;font-size:12px;letter-spacing:3px;
+  color:var(--cyan);margin-bottom:.4rem;text-align:center}
+.sub{font-size:13px;color:var(--muted);text-align:center;line-height:1.7;
+  margin-bottom:1.25rem;max-width:420px;font-family:'Inter',sans-serif}
+
+/* ONOMATOPEYAS */
+.onoma{font-family:'Bangers',cursive;position:absolute;pointer-events:none;z-index:5;line-height:1}
+.pow{font-size:36px;color:var(--gold);letter-spacing:2px;
+  text-shadow:-2px -2px 0 var(--ink),2px 2px 0 var(--red);
+  transform:rotate(-8deg);top:-18px;right:-8px}
+.zap{font-size:28px;color:var(--cyan);
+  text-shadow:-2px -2px 0 var(--ink),2px 2px 0 var(--purple);
+  transform:rotate(5deg);top:-14px;left:-4px}
+
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:.85rem 1.5rem;font-family:'Bangers',cursive;font-size:20px;
+  letter-spacing:2px;border:var(--panel-border);border-radius:var(--r);
+  cursor:pointer;transition:all .12s;width:100%;margin-top:.5rem}
+.btn-p{background:linear-gradient(135deg,var(--purple),var(--purple2));
+  color:var(--white);box-shadow:5px 5px 0 var(--ink)}
+.btn-p:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.btn-p:active:not(:disabled){transform:translate(2px,2px);box-shadow:3px 3px 0 var(--ink)}
+.btn-p:disabled{opacity:.3;cursor:not-allowed}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.btn-gold:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.btn-gold:active{transform:translate(2px,2px);box-shadow:3px 3px 0 var(--ink)}
+
+/* INPUTS */
+input[type=text],textarea{width:100%;background:var(--ink3);
+  border:3px solid rgba(255,255,255,.15);border-radius:var(--r);
+  padding:.75rem 1rem;font-size:15px;color:var(--white);
+  font-family:'Comic Neue',cursive;outline:none;transition:border .2s;
+  box-shadow:inset 2px 2px 0 rgba(0,0,0,.3)}
+input[type=text]:focus,textarea:focus{border-color:var(--purple3)}
+textarea{resize:vertical;min-height:90px;line-height:1.6}
+.lbl{font-family:'Bangers',cursive;font-size:13px;letter-spacing:1px;color:var(--muted);margin-bottom:5px;display:block}
+
+/* HEROES */
+.hgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;margin-bottom:1rem}
+.hcard{background:var(--ink2);border:3px solid rgba(255,255,255,.12);border-radius:var(--r);
+  padding:.85rem .6rem;cursor:pointer;transition:all .12s;text-align:center;position:relative;overflow:hidden}
+.hcard:hover{border-color:var(--purple3);transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.hcard.sel{border:3px solid var(--gold);background:rgba(255,215,0,.07);box-shadow:4px 4px 0 var(--gold2)}
+.hcheck{display:none;position:absolute;top:6px;right:6px;width:20px;height:20px;
+  background:var(--gold);border-radius:50%;border:2px solid var(--ink);
+  align-items:center;justify-content:center;font-size:10px;color:var(--ink);font-weight:700}
+.hcard.sel .hcheck{display:flex}
+.hico{width:50px;height:50px;border-radius:50%;margin:0 auto 7px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;border:3px solid var(--ink)}
+.hname{font-family:'Bangers',cursive;font-size:15px;letter-spacing:1px;color:var(--white);margin-bottom:2px}
+.hpow{font-size:10px;color:var(--purple3);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* CASO */
+.file-stamp{font-family:'Bangers',cursive;font-size:11px;letter-spacing:2px;
+  color:var(--red);border:2px solid var(--red);border-radius:4px;
+  padding:2px 8px;transform:rotate(-2deg);display:inline-block;margin-bottom:.5rem}
+.file-title{font-family:'Bangers',cursive;font-size:20px;color:var(--gold);letter-spacing:1px;margin-bottom:.5rem}
+.file-body{font-size:13px;line-height:1.75;color:var(--ink);font-family:'Inter',sans-serif}
+
+/* OPTIONS */
+.qnum{font-family:'Bangers',cursive;font-size:13px;letter-spacing:2px;color:var(--cyan);margin-bottom:.4rem}
+.qtxt{font-size:14px;color:var(--white);font-weight:700;margin-bottom:.75rem;line-height:1.55;width:100%;font-family:'Inter',sans-serif}
+.opt{background:var(--ink2);border:3px solid rgba(255,255,255,.12);border-radius:var(--r);
+  padding:.65rem .9rem;cursor:pointer;transition:all .12s;margin-bottom:6px;font-size:13px;
+  color:var(--white);display:flex;align-items:flex-start;gap:10px;width:100%;font-family:'Inter',sans-serif}
+.opt:hover:not(.locked){border-color:var(--purple3);background:rgba(155,127,255,.1);transform:translateX(3px)}
+.opt.ok{border-color:var(--green)!important;background:rgba(57,255,20,.07)!important;color:var(--green)!important;transform:none!important;cursor:default}
+.opt.bad{border-color:var(--red)!important;background:rgba(230,57,70,.07)!important;color:var(--red)!important;transform:none!important;cursor:default}
+.opt.locked{cursor:default}
+.oltr{width:24px;height:24px;border-radius:4px;background:rgba(155,127,255,.2);
+  border:2px solid rgba(155,127,255,.3);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;font-family:'Bangers',cursive;color:var(--purple3);letter-spacing:0;margin-top:1px}
+.opt.ok .oltr{background:var(--green);border-color:var(--green);color:var(--ink)}
+.opt.bad .oltr{background:var(--red);border-color:var(--red);color:var(--white)}
+.fbadge{font-family:'Bangers',cursive;font-size:26px;letter-spacing:2px;text-align:center;
+  padding:.3rem;margin-bottom:.5rem;animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
+.fbadge.ok{color:var(--green);text-shadow:0 0 16px var(--green)}
+.fbadge.bad{color:var(--red);text-shadow:0 0 16px var(--red)}
+
+/* SCALE */
+.scrow{display:flex;gap:8px;justify-content:center;margin:.6rem 0}
+.sbtn{width:48px;height:48px;border-radius:var(--r);border:3px solid rgba(255,255,255,.18);
+  background:var(--ink2);color:var(--muted);font-family:'Bangers',cursive;font-size:20px;
+  cursor:pointer;transition:all .12s;box-shadow:3px 3px 0 var(--ink)}
+.sbtn:hover{border-color:var(--purple3);color:var(--purple3);transform:translate(-1px,-1px)}
+.sbtn.sel{background:var(--purple);border-color:var(--purple3);color:var(--white);transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.sclabels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+
+/* HERO BANNER */
+.hbanner{display:flex;align-items:center;gap:12px;background:rgba(255,215,0,.06);
+  border:3px solid var(--gold);border-radius:var(--r);padding:.75rem 1rem;
+  margin-bottom:.75rem;width:100%;box-shadow:4px 4px 0 var(--gold2)}
+.hbico{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:24px;flex-shrink:0;border:3px solid var(--ink)}
+.hbname{font-family:'Bangers',cursive;font-size:18px;letter-spacing:1px;color:var(--gold)}
+.hbpow{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* INFO */
+.info-img{width:100%;border-radius:var(--r);border:3px solid rgba(185,127,255,.3);
+  margin-bottom:1rem;object-fit:contain;max-height:300px}
+.info-title{font-family:'Bangers',cursive;font-size:26px;letter-spacing:2px;color:var(--gold);
+  text-align:center;margin-bottom:.2rem;text-shadow:-2px -2px 0 var(--ink),2px 2px 0 var(--ink)}
+.info-sub{font-family:'Bangers',cursive;font-size:15px;letter-spacing:1px;color:var(--purple3);text-align:center;margin-bottom:.75rem}
+.info-body{font-size:13px;color:var(--white);line-height:1.75;font-family:'Inter',sans-serif}
+.info-body p{margin-bottom:.75rem}
+.info-body p:last-child{margin-bottom:0}
+
+/* SCORE */
+.score-box{background:var(--ink3);border:3px solid var(--cyan);border-radius:var(--r);
+  padding:.75rem;margin:.5rem 0 .75rem;text-align:center;box-shadow:4px 4px 0 rgba(0,245,255,.25)}
+.score-num{font-family:'Bangers',cursive;font-size:38px;color:var(--cyan);letter-spacing:2px}
+.score-lbl{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.stars-row{display:flex;justify-content:center;gap:5px;margin:.3rem 0}
+.star{font-size:26px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1) forwards;opacity:0}
+
+/* GRACIAS FINAL */
+.gracias-box{background:linear-gradient(135deg,rgba(123,47,190,.2),rgba(83,74,183,.15));
+  border:4px solid var(--purple3);border-radius:var(--r);
+  padding:1.75rem 1.5rem;width:100%;margin-bottom:1rem;text-align:center;
+  box-shadow:6px 6px 0 var(--purple),12px 12px 0 rgba(123,47,190,.12);position:relative;overflow:hidden}
+.gracias-box::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 5px,rgba(155,127,255,.025) 5px,rgba(155,127,255,.025) 10px);
+  pointer-events:none}
+.gracias-nombre{font-family:'Bangers',cursive;font-size:clamp(22px,5vw,34px);
+  letter-spacing:3px;color:var(--gold);margin-bottom:.35rem;position:relative;z-index:1;
+  text-shadow:-2px -2px 0 var(--ink),2px 2px 0 var(--gold2)}
+.gracias-msg{font-size:14px;color:var(--white);line-height:1.8;font-family:'Inter',sans-serif;
+  position:relative;z-index:1}
+.gracias-sub{font-size:13px;color:var(--muted);line-height:1.7;font-family:'Inter',sans-serif;
+  margin-top:.75rem;position:relative;z-index:1}
+
+/* CÓDIGO RECOMPENSA */
+.reward-box{background:rgba(255,215,0,.07);border:4px solid var(--gold);border-radius:var(--r);
+  padding:1.1rem 1.25rem;width:100%;margin-bottom:1rem;text-align:center;box-shadow:5px 5px 0 var(--gold2)}
+.reward-label{font-family:'Bangers',cursive;font-size:12px;letter-spacing:3px;color:var(--muted);margin-bottom:.4rem}
+.reward-code{font-family:'Bangers',cursive;font-size:36px;letter-spacing:6px;color:var(--gold);
+  text-shadow:-2px -2px 0 var(--ink),2px 2px 0 var(--gold2);animation:glow 2s infinite}
+@keyframes glow{0%,100%{text-shadow:-2px -2px 0 var(--ink),2px 2px 0 var(--gold2),0 0 20px rgba(255,215,0,.3)}
+  50%{text-shadow:-2px -2px 0 var(--ink),2px 2px 0 var(--gold2),0 0 40px rgba(255,215,0,.7)}}
+.reward-desc{font-size:12px;color:var(--muted);margin-top:.35rem;font-family:'Inter',sans-serif}
+
+/* FIRMA */
+.firma{font-family:'Bangers',cursive;font-size:13px;letter-spacing:2px;
+  color:var(--purple3);text-align:center;margin-top:.75rem;opacity:.7}
+</style>
+</head>
+<body>
+<div class="bg-halftone"></div>
+<div class="bg-overlay"></div>
+<div class="bg-lines"></div>
+
+<div class="logo-wrap" id="logoWrap">
+  <img src="IconoCI-blanco.png" alt="Children International">
+  <span class="logo-txt">Liga CNJ</span>
+</div>
+
+<div class="pbar" id="pbar">
+  <div class="pdots" id="dots"></div>
+  <div class="ptxt" id="ptxt">MISIÓN 0</div>
+</div>
+
+<div class="app">
+
+<!-- VIDEO -->
+<div class="slide active" id="s-video" style="max-width:100%;padding:0;margin-top:-72px">
+  <div class="video-wrap">
+    <video id="introVideo" playsinline autoplay muted>
+      <source src="video-intro.mp4" type="video/mp4">
+    </video>
+    <div class="video-progress"><div class="video-progress-bar" id="vidBar"></div></div>
+    <button class="video-skip" onclick="go('s1')">Saltar intro ›</button>
+  </div>
+</div>
+
+<!-- S1: PORTADA -->
+<div class="slide" id="s1">
+  <div class="eyebrow">⚡ Liga CNJ · Agencia Quito 2026 ⚡</div>
+  <h1 class="comic">MISIÓN <span>0</span></h1>
+  <h1 class="comic" style="font-size:clamp(20px,4.5vw,34px);margin-bottom:1rem">EL NACIMIENTO<br>DE LA <span>LIGA</span></h1>
+  <div class="bubble">
+    <strong>¡Atención, facilitador/a!</strong> Antes de que el taller comience, la Liga necesita medir tu poder. Completa esta misión, activa tu <strong>Identidad Heroica</strong> y únete al equipo.
+  </div>
+  <button class="btn btn-gold" onclick="go('s2')">⚡ INICIAR MISIÓN ⚡</button>
+</div>
+
+<!-- S2: NOMBRE -->
+<div class="slide" id="s2">
+  <div class="eyebrow">Paso 1 de 7</div>
+  <h2 class="comic">¿QUIÉN ERES,<br><span>HÉROE</span>?</h2>
+  <div class="panel-dark" style="position:relative">
+    <div class="onoma zap">ZAP!</div>
+    <label class="lbl">Tu nombre completo</label>
+    <input type="text" id="inp-name" placeholder="Ej: María Pérez" oninput="chkName()">
+  </div>
+  <button class="btn btn-p" id="btn-name" disabled onclick="submitName()">🔓 CONTINUAR</button>
+</div>
+
+<!-- S3: HÉROE -->
+<div class="slide" id="s3">
+  <div class="eyebrow">Paso 2 de 7</div>
+  <h2 class="comic">ELIGE TU<br><span>HÉROE</span></h2>
+  <div class="bubble" style="font-size:12px">Cada héroe representa un superpoder del Camino CNJ. ¿Cuál es el tuyo?</div>
+  <div class="hgrid" id="hgrid"></div>
+  <button class="btn btn-gold" id="btn-hero" disabled onclick="go('s4')">⚔️ ACEPTAR LA MISIÓN</button>
+</div>
+
+<!-- S4: INFO EL CAMINO -->
+<div class="slide" id="s4">
+  <div class="eyebrow">Paso 3 de 7 · Conoce el sistema</div>
+  <div class="panel-info" style="position:relative">
+    <div class="onoma pow" style="font-size:24px;top:-14px;right:-6px">¡PODER!</div>
+    <img src="camino-infografia.png" alt="El Camino CNJ" class="info-img">
+    <div class="info-title">El Camino y la Estrategia 19+</div>
+    <div class="info-sub">¿Por qué están juntos?</div>
+    <div class="info-body">
+      <p>El Camino de la Niñez y Juventud y la Estrategia 19+ son parte de una misión común: acompañar a jóvenes en su transición hacia la vida adulta productiva.</p>
+      <p>Mientras el Camino construye capacidades, liderazgo y conexión comunitaria durante la niñez y adolescencia, la Estrategia 19+ acelera la inserción laboral y el emprendimiento entre los 19 y 24 años.</p>
+      <p>Juntos forman un continuo de oportunidades que reconoce las habilidades únicas de cada joven y las conecta con empleos dignos y negocios propios.</p>
+      <p><strong style="color:var(--gold)">Tú, como héroe del Camino, eres parte de esta estrategia de transformación que empodera jóvenes de barrios urbano-marginales de Quito.</strong></p>
+    </div>
+  </div>
+  <button class="btn btn-p" onclick="go('s5')">📖 ENTENDIDO · CONTINUAR</button>
+</div>
+
+<!-- S5: CASO VALERIA -->
+<div class="slide" id="s5">
+  <div class="eyebrow">Paso 4 de 7 · Caso Ancla</div>
+  <div id="banner5" style="width:100%"></div>
+  <div class="panel" style="position:relative">
+    <div class="onoma pow">¡URGENTE!</div>
+    <div class="file-stamp">CONFIDENCIAL</div>
+    <div class="file-title">📁 Caso Valeria</div>
+    <div class="file-body">
+      <strong style="color:#7B2FBE">Valeria · 17 años · Quito, Ecuador</strong><br><br>
+      Valeria terminó el colegio hace 4 meses. Durante su etapa en el CNJ participó activamente, pero al graduarse sintió que "ya no había un lugar para ella" en el programa. Nadie le habló de la Estrategia 19+.<br><br>
+      Hoy siente presión familiar por conseguir trabajo rápido, inseguridad sobre sus habilidades y no sabe si estudiar, trabajar o emprender. Dejó de participar en espacios comunitarios porque siente que "eso era para cuando era chica".<br><br>
+      <strong>Su frase:</strong> <em>"Ya salí del Camino. Ahora estoy sola."</em>
+    </div>
+  </div>
+  <div class="qtxt">¿Qué elementos del Camino CNJ deberían fortalecerse para apoyar a Valeria y por qué?</div>
+  <textarea id="inp-valeria" placeholder="Escribe tu análisis aquí..." oninput="chkValeria()"></textarea>
+  <button class="btn btn-p" id="btn-valeria" disabled onclick="go('s6')" style="margin-top:.75rem">🗺️ CONTINUAR</button>
+</div>
+
+<!-- S6: PREGUNTAS -->
+<div class="slide" id="s6">
+  <div class="eyebrow">Paso 5 de 7 · Prueba de conocimiento</div>
+  <h2 class="comic">DEMUESTRA TU<br><span>PODER</span></h2>
+  <div id="qarea" style="width:100%"></div>
+  <div id="feedback" style="width:100%"></div>
+  <button class="btn btn-p" id="btn-q" disabled onclick="nextQ()">SIGUIENTE →</button>
+</div>
+
+<!-- S7: AUTOEVAL -->
+<div class="slide" id="s7">
+  <div class="eyebrow">Paso 6 de 7</div>
+  <h2 class="comic">MIDE TU<br><span>PODER</span></h2>
+  <div class="bubble" style="font-size:12px">Sé honesto/a — este es tu punto de partida, ¡no tu límite!</div>
+  <div class="panel-dark">
+    <div class="qtxt">¿Qué tan seguro/a te sientes explicando el Camino CNJ completo (de 2 a 24 años)?</div>
+    <div class="scrow" id="sc1"></div>
+    <div class="sclabels"><span>🔴 Necesito aprender</span><span>🟢 Puedo guiar</span></div>
+  </div>
+  <div class="panel-dark">
+    <div class="qtxt">¿Qué tan cómodo/a te sientes en el eje de Empleo e Inserción Laboral (19+)?</div>
+    <div class="scrow" id="sc2"></div>
+    <div class="sclabels"><span>🔴 Territorio nuevo</span><span>🟢 Mi fortaleza</span></div>
+  </div>
+  <button class="btn btn-gold" id="btn-sc" disabled onclick="go('s8')">⚡ FINALIZAR MISIÓN</button>
+</div>
+
+<!-- S8: PANTALLA FINAL -->
+<div class="slide" id="s8">
+  <div class="eyebrow">Paso 7 de 7 · Misión completada</div>
+  <h2 class="comic">¡MISIÓN <span>0</span><br>COMPLETADA!</h2>
+  <div id="banner8" style="width:100%"></div>
+  <div id="scoreArea" style="width:100%"></div>
+  <div class="gracias-box">
+    <div class="gracias-nombre" id="gracias-nombre"></div>
+    <div class="gracias-msg" id="gracias-msg"></div>
+    <div class="gracias-sub">
+      Mantente atento/a a tu siguiente misión como héroe del Camino. El equipo de la Liga te estará contactando muy pronto con los detalles de la <strong style="color:var(--gold)">Misión 1</strong>.
+    </div>
+    <div class="firma">— La Liga CNJ · Children International · Quito 2026</div>
+  </div>
+  <div class="reward-box">
+    <div class="reward-label">🔓 Tu código para la siguiente misión</div>
+    <div class="reward-code">CAMINO19</div>
+    <div class="reward-desc">Guarda este código — lo necesitarás para desbloquear la Misión 1</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+var H=[
+  {id:'estratega',name:'El Estratega',power:'Visión Estratégica',icon:'♟️',bg:'#534AB7'},
+  {id:'guardiana',name:'La Guardiana',power:'Escucha Verdadera',icon:'🛡️',bg:'#1D9E75'},
+  {id:'velocista',name:'El Velocista',power:'Impulso Relámpago',icon:'⚡',bg:'#BA7517'},
+  {id:'innovadora',name:'La Innovadora',power:'Mente Creativa',icon:'💡',bg:'#D4537E'},
+  {id:'conector',name:'El Conector',power:'Conexión Comunitaria',icon:'🤝',bg:'#185FA5'},
+  {id:'inspiradora',name:'La Inspiradora',power:'Voz del Camino',icon:'🎙️',bg:'#D85A30'},
+  {id:'guardian',name:'El Guardián',power:'Protección del Camino',icon:'🔰',bg:'#3B6D11'},
+  {id:'exploradora',name:'La Exploradora',power:'Radar del Futuro',icon:'🧭',bg:'#6B4F9E'}
+];
+var Q=[
+  {q:'¿Cuándo termina el Camino de un joven del CNJ?',opts:['Cuando cumple 18 años y termina el colegio','Cuando se gradúa, sin importar la edad','Al completar la Estrategia 19+ con inserción laboral (hasta 24 años)','El Camino no tiene fin establecido'],ok:2},
+  {q:'¿Cuáles son los 4 ejes del Desarrollo Integral en la Estrategia 19+?',opts:['Educación, Familia, Salud y Emprendimiento','Transformación, Socioemocional, Planificación para el Futuro y Empleo','Liderazgo, Comunidad, Transformación y Empleo','Socioemocional, Planificación, Emprendimiento y Vocación'],ok:1},
+  {q:'¿Cuáles son las 4 intervenciones de la Estrategia 19+?',opts:['Desarrollo Integral, Formación Central, Inserción Laboral y Participación Comunitaria','Acompañamiento Psicológico, Formación Técnica, Empleo y Voluntariado','Diagnóstico, Intervención, Seguimiento y Cierre','Orientación Vocacional, Becas, Empleo y Comunidad'],ok:0},
+  {q:'Un joven dice: "Ya terminé el Camino, ahora estoy en otra cosa." ¿Qué revela esta frase?',opts:['Que tiene claridad sobre su transición entre etapas','Que percibe CNJ y 19+ como programas separados, no como un sistema continuo','Que completó exitosamente su proceso en el CNJ','Que el facilitador hizo bien su trabajo de acompañamiento'],ok:1}
+];
+var ST={name:'',hero:null,valeria:'',answers:[],s1:0,s2:0,qi:0,locked:false};
+
+// VIDEO
+var vid=document.getElementById('introVideo');
+var vidBar=document.getElementById('vidBar');
+if(vid){
+  vid.addEventListener('timeupdate',function(){
+    if(vid.duration>0)vidBar.style.width=(vid.currentTime/vid.duration*100)+'%';
+  });
+  vid.addEventListener('ended',function(){go('s1');});
+  vid.addEventListener('error',function(){go('s1');});
+  vid.play().then(function(){
+    setTimeout(function(){vid.muted=false;},800);
+  }).catch(function(){vid.muted=true;vid.play().catch(function(){go('s1');});});
+}
+
+function buildHeroes(){
+  var g=document.getElementById('hgrid');g.innerHTML='';
+  H.forEach(function(h){
+    var d=document.createElement('div');d.className='hcard';d.id='hc-'+h.id;
+    d.innerHTML='<div class="hcheck">✓</div><div class="hico" style="background:'+h.bg+';border-color:'+h.bg+'">'+h.icon+'</div><div class="hname">'+h.name+'</div><div class="hpow">'+h.power+'</div>';
+    d.onclick=function(){
+      document.querySelectorAll('.hcard').forEach(function(c){c.classList.remove('sel')});
+      d.classList.add('sel');ST.hero=h;
+      document.getElementById('btn-hero').disabled=false;
+    };
+    g.appendChild(d);
+  });
+}
+
+function buildScales(){
+  ['sc1','sc2'].forEach(function(id,idx){
+    var row=document.getElementById(id);row.innerHTML='';
+    for(var v=1;v<=5;v++){
+      (function(val,r){
+        var b=document.createElement('button');b.className='sbtn';b.textContent=val;
+        b.onclick=function(){
+          r.querySelectorAll('.sbtn').forEach(function(x){x.classList.remove('sel')});
+          b.classList.add('sel');
+          if(idx===0)ST.s1=val;else ST.s2=val;
+          if(ST.s1>0&&ST.s2>0)document.getElementById('btn-sc').disabled=false;
+        };
+        row.appendChild(b);
+      })(v,row);
+    }
+  });
+}
+
+function banner(id){
+  if(!ST.hero)return;
+  var h=ST.hero;
+  document.getElementById(id).innerHTML='<div class="hbanner"><div class="hbico" style="background:'+h.bg+';border-color:'+h.bg+'">'+h.icon+'</div><div><div class="hbname">'+h.name+'</div><div class="hbpow">'+h.power+'</div></div></div>';
+}
+
+function buildQ(){
+  var q=Q[ST.qi];ST.locked=false;
+  var bq=document.getElementById('btn-q');
+  bq.disabled=true;
+  bq.textContent=ST.qi<Q.length-1?'SIGUIENTE →':'CONTINUAR ⚡';
+  document.getElementById('feedback').innerHTML='';
+  var ltrs=['A','B','C','D'];
+  var html='<div class="qnum">⚡ PREGUNTA '+(ST.qi+1)+' DE '+Q.length+'</div><div class="qtxt">'+q.q+'</div>';
+  q.opts.forEach(function(o,i){
+    html+='<div class="opt" id="opt'+i+'" onclick="pickOpt('+i+')"><div class="oltr">'+ltrs[i]+'</div><span>'+o+'</span></div>';
+  });
+  document.getElementById('qarea').innerHTML=html;
+}
+
+function pickOpt(i){
+  if(ST.locked)return;ST.locked=true;
+  var q=Q[ST.qi];ST.answers.push(i);
+  document.querySelectorAll('.opt').forEach(function(o){o.classList.add('locked')});
+  var opts=document.querySelectorAll('.opt');
+  var ok=i===q.ok;
+  opts[q.ok].classList.add('ok');
+  if(!ok)opts[i].classList.add('bad');
+  document.getElementById('feedback').innerHTML='<div class="fbadge '+(ok?'ok':'bad')+'">'+(ok?'💥 ¡CORRECTO!':'💨 ¡FALLASTE! Sigue en pie.')+'</div>';
+  document.getElementById('btn-q').disabled=false;
+}
+
+function nextQ(){
+  ST.qi++;
+  if(ST.qi>=Q.length)go('s7');else buildQ();
+}
+
+function buildFinal(){
+  var c=ST.answers.filter(function(a,i){return a===Q[i].ok}).length;
+  var lvl=c<=1?'🔴 INICIAL':c===2?'🟡 BÁSICO':c===3?'🟢 ESTRATÉGICO':'💜 SISTÉMICO';
+  var stars='';
+  for(var i=0;i<4;i++){
+    stars+='<span class="star" style="animation-delay:'+(i*0.1)+'s">'+(i<c?'⭐':'☆')+'</span>';
+  }
+  document.getElementById('scoreArea').innerHTML=
+    '<div class="score-box"><div class="score-lbl">Conocimiento del Camino</div>'+
+    '<div class="score-num">'+c+' / 4</div>'+
+    '<div class="stars-row">'+stars+'</div>'+
+    '<div style="font-family:\'Bangers\',cursive;font-size:15px;letter-spacing:1px;color:var(--gold);margin-top:.2rem">'+lvl+'</div></div>';
+
+  // Mensaje personalizado con nombre
+  var firstName=ST.name.split(' ')[0];
+  document.getElementById('gracias-nombre').textContent='¡Gracias, '+firstName+'!';
+  document.getElementById('gracias-msg').innerHTML=
+    'Completaste la <strong>Misión 0</strong> como el/la verdadero/a héroe que eres. '+
+    'Tu punto de partida ha sido registrado y es el primer paso de tu transformación como facilitador/a del Camino CNJ.<br><br>'+
+    '¡El Camino apenas comienza para ti, <strong style="color:var(--gold)">'+ST.hero.name+'</strong>!';
+}
+
+function progress(sid){
+  var bar=document.getElementById('pbar');
+  var logo=document.getElementById('logoWrap');
+  if(sid==='s-video'){bar.classList.remove('show');logo.style.display='none';return;}
+  logo.style.display='flex';
+  var steps=['s1','s2','s3','s4','s5','s6','s7','s8'];
+  var idx=steps.indexOf(sid);
+  if(idx<0){bar.classList.remove('show');return;}
+  bar.classList.add('show');
+  var dots=document.getElementById('dots');dots.innerHTML='';
+  steps.forEach(function(s,i){
+    var d=document.createElement('div');
+    d.className='pd'+(i<idx?' done':i===idx?' active':'');
+    dots.appendChild(d);
+  });
+  document.getElementById('ptxt').textContent='MISIÓN 0 · PASO '+(idx+1)+' DE '+steps.length;
+}
+
+function go(sid){
+  document.querySelectorAll('.slide').forEach(function(s){s.classList.remove('active')});
+  document.getElementById(sid).classList.add('active');
+  progress(sid);window.scrollTo(0,0);
+  if(sid==='s5')banner('banner5');
+  if(sid==='s6')buildQ();
+  if(sid==='s8'){banner('banner8');buildFinal();}
+}
+
+function chkName(){
+  document.getElementById('btn-name').disabled=document.getElementById('inp-name').value.trim().length<2;
+}
+function submitName(){ST.name=document.getElementById('inp-name').value.trim();go('s3');}
+function chkValeria(){
+  ST.valeria=document.getElementById('inp-valeria').value.trim();
+  document.getElementById('btn-valeria').disabled=ST.valeria.length<20;
+}
+
+buildHeroes();
+buildScales();
+</script>
+</body>
+</html>
