@@ -155,11 +155,11 @@ textarea{resize:vertical;min-height:85px;line-height:1.6}
   <button class="btn btn-gold" onclick="go('s3')">⚔️ CONTINUAR LA MISIÓN</button>
 </div>
 
-<!-- S3: FICHA DE JOVEN REAL (actividad nueva: completar ficha) -->
+<!-- S3: FICHA DEL PERFIL IDEAL -->
 <div class="slide" id="s3">
-  <div class="ey">Paso 2 de 5 · Tu joven real</div>
+  <div class="ey">Paso 2 de 5 · Tu joven ideal</div>
   <h2 class="c">CONSTRUYE LA<br><span>FICHA</span></h2>
-  <div class="bubble" style="font-size:12px">La Intervención 2 tiene <strong>595 cupos en 2026</strong>. Para que lleguen al joven correcto, el equipo necesita identificarlos con precisión. Completa la ficha con las características del joven que consideras un buen perfil para la Intervención 2. En los campos de intereses y barreras, ingresa información real basada en tu experiencia con jóvenes — no inventes, usa lo que has visto.</div>
+  <div class="bubble" style="font-size:12px">La Intervención 2 tiene <strong>595 cupos en 2026</strong>. Completa la ficha con las características del joven que consideras un buen perfil para esta intervención. En motivaciones y barreras, ingresa información real basada en tu experiencia con jóvenes.</div>
   <div class="pd-dark">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.85rem">
       <div>
@@ -172,9 +172,9 @@ textarea{resize:vertical;min-height:85px;line-height:1.6}
       </div>
     </div>
     <label class="lbl">¿Qué lo motiva más allá del empleo? (intereses, sueños)</label>
-    <textarea id="inp-motiv" placeholder="Ej: le gusta la música, quiere aprender algo técnico..." style="min-height:60px"></textarea>
+    <textarea id="inp-motiv" placeholder="Usa tu experiencia real con jóvenes..." style="min-height:60px"></textarea>
     <label class="lbl" style="margin-top:.75rem">¿Qué barreras concretas tendría para completar un curso de 6 meses?</label>
-    <textarea id="inp-barreras" placeholder="Ej: cuida a sus hermanos, no tiene para el transporte..." style="min-height:60px"></textarea>
+    <textarea id="inp-barreras" placeholder="Ej: cuida a sus hermanos, transporte..." style="min-height:60px"></textarea>
     <label class="lbl" style="margin-top:.75rem">¿Es elegible para la Intervención 2? ¿Por qué?</label>
     <div style="background:rgba(83,74,183,.12);border:1px solid var(--purple3);border-radius:var(--r);padding:.6rem .75rem;margin-bottom:.5rem;font-size:12px;color:var(--purple3);font-family:Inter,sans-serif"><strong>Recuerda:</strong> la Int. 2 es solo para jóvenes que <strong>no han recibido capacitación técnica patrocinada por CI</strong> previamente.</div>
     <textarea id="inp-elegible" placeholder="Explica si cumple el criterio y por qué..." style="min-height:60px"></textarea>
@@ -182,41 +182,19 @@ textarea{resize:vertical;min-height:85px;line-height:1.6}
   <button class="btn btn-p" onclick="go('s4')">CONTINUAR →</button>
 </div>
 
-<!-- S4: RULETA DE BARRERAS -->
+<!-- S4: MAPA DE BARRERAS -->
 <div class="slide" id="s4">
-  <div class="ey">Paso 3 de 5 · Ruleta de barreras</div>
-  <h2 class="c">GIRA LA<br><span>RULETA</span></h2>
-  <div class="bubble" style="font-size:12px">Gira la ruleta — aparecerá una barrera real que enfrentan los jóvenes. Escribe <strong>una acción concreta</strong> que implementarías para mitigarla. Puedes girar varias veces.</div>
-
-  <!-- RULETA VISUAL -->
-  <div style="width:100%;display:flex;flex-direction:column;align-items:center;margin-bottom:1rem">
-    <div style="position:relative;width:220px;height:220px;margin-bottom:1rem">
-      <canvas id="ruletaCanvas" width="220" height="220" style="border-radius:50%;display:block"></canvas>
-      <!-- Flecha indicadora -->
-      <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:28px;line-height:1">▼</div>
-    </div>
-    <button class="btn btn-gold" id="btnGirar" onclick="girarRuleta()" style="width:180px;font-size:18px;padding:.6rem 1rem">⚡ GIRAR</button>
+  <div class="ey">Paso 3 de 5 · El equipo en acción</div>
+  <h2 class="c">EL EQUIPO<br><span>EN ACCIÓN</span></h2>
+  <div class="bubble" style="font-size:12px">Para cada barrera real que enfrentan los jóvenes, escribe la <strong>acción concreta</strong> que implementarías para mitigarla o eliminarla.</div>
+  <div class="pd-dark" id="mapa-wrap">
+    <div style="font-family:Bangers,cursive;font-size:12px;letter-spacing:1px;color:var(--purple3);margin-bottom:.75rem">BARRERA → ACCIÓN QUE IMPLEMENTARÍAS</div>
   </div>
-
-  <!-- BARRERA ACTIVA -->
-  <div id="barrera-activa" style="display:none;width:100%">
-    <div class="pd-dark">
-      <div style="font-family:Bangers,cursive;font-size:11px;letter-spacing:2px;color:var(--purple3);margin-bottom:.4rem">BARRERA ACTIVA</div>
-      <div id="barrera-texto" style="font-family:Bangers,cursive;font-size:20px;color:var(--gold);letter-spacing:1px;margin-bottom:.75rem;line-height:1.3"></div>
-      <label class="lbl">¿Qué acción concreta implementarías para mitigar o eliminar esta barrera?</label>
-      <textarea id="inp-barrera-resp" placeholder="Escribe la acción concreta..."></textarea>
-      <button class="btn btn-p" onclick="guardarRespuestaBarrera()" style="margin-top:.5rem;font-size:16px">GUARDAR RESPUESTA</button>
-    </div>
-  </div>
-
-  <!-- RESPUESTAS GUARDADAS -->
-  <div id="respuestas-guardadas" style="width:100%;margin-top:.5rem"></div>
-
   <div class="pd-dark" style="margin-top:.5rem">
     <label class="lbl">¿Hay alguna barrera que tu equipo actualmente NO sabe cómo abordar?</label>
     <textarea id="inp-gap" placeholder="Sé honesto/a — eso también es información valiosa..."></textarea>
   </div>
-  <button class="btn btn-gold" onclick="go('s5')">CONTINUAR →</button>
+  <button class="btn btn-p" onclick="go('s5')">CONTINUAR →</button>
 </div>
 
 <!-- S5: INFO CLAVE + REFLEXIÓN -->
@@ -275,23 +253,22 @@ firebase.initializeApp({
 var db=firebase.firestore();
 
 var BARRERAS=[
-  {b:"Transporte lejano o costoso",p:"¿Qué haría el equipo?"},
-  {b:"Cuida a familiares en casa",p:"¿Qué haría el equipo?"},
-  {b:"Trabaja informalmente y no puede faltar",p:"¿Qué haría el equipo?"},
-  {b:"No ve utilidad en la formación",p:"¿Qué haría el equipo?"}
+  {b:"Transporte lejano o muy costoso"},
+  {b:"Cuida a familiares en casa"},
+  {b:"Trabaja informalmente y no puede faltar"},
+  {b:"No ve utilidad en la formación"}
 ];
 
 var ST={name:"",cod:"",codOk:false,edad:"",barrio:"",motiv:"",barreras:"",elegible:"",respBarreras:{},gap:"",convoc:""};
 var CODE="PORTAL24";
 
-// Build mapa de decisión
 (function(){
   var w=document.getElementById("mapa-wrap");
-  var lbl=w.querySelector("div");
+  if(!w)return;
   BARRERAS.forEach(function(item,i){
     var div=document.createElement("div");
     div.style.marginBottom=".75rem";
-    div.innerHTML="<div style='font-size:12px;color:var(--gold);font-family:Bangers,cursive;letter-spacing:.5px;margin-bottom:4px'>"+item.b+"</div><textarea id='bar-"+i+"' placeholder='"+item.p+"' style='min-height:56px'></textarea>";
+    div.innerHTML="<div style='font-size:12px;color:var(--gold);font-family:Bangers,cursive;letter-spacing:.5px;margin-bottom:4px'>"+item.b+"</div><textarea id='bar-"+i+"' placeholder='Escribe la acción concreta que implementarías...' style='min-height:56px;width:100%;background:var(--ink3);border:3px solid rgba(255,255,255,.15);border-radius:8px;padding:.65rem .85rem;font-size:14px;color:#fff;font-family:Comic Neue,cursive;outline:none;resize:vertical'></textarea>";
     w.appendChild(div);
   });
 })();
@@ -313,18 +290,29 @@ function progress(sid){
 
 function go(sid){
   document.querySelectorAll(".slide").forEach(function(s){s.classList.remove("active")});
-  var el=document.getElementById(sid);if(!el)return;
-  el.classList.add("active");progress(sid);window.scrollTo(0,0);
+  var el=document.getElementById(sid);
+  if(!el)return;
+  el.classList.add("active");
+  progress(sid);
+  window.scrollTo(0,0);
 }
 
 function submitAccess(){
   var n=document.getElementById("inp-name").value.trim();
-  if(n.length<2){document.getElementById("inp-name").style.borderColor="var(--red)";document.getElementById("inp-name").focus();return;}
+  if(n.length<2){
+    document.getElementById("inp-name").style.borderColor="var(--red)";
+    document.getElementById("inp-name").focus();
+    return;
+  }
   document.getElementById("inp-name").style.borderColor="";
   var c=document.getElementById("inp-code").value.trim().toUpperCase();
   ST.name=n;ST.cod=c;ST.codOk=(c===CODE);
-  if(c.length>0&&!ST.codOk){document.getElementById("warn-code").style.display="block";setTimeout(function(){go("s2");},1200);}
-  else{go("s2");}
+  if(c.length>0&&!ST.codOk){
+    document.getElementById("warn-code").style.display="block";
+    setTimeout(function(){go("s2");},1200);
+  } else {
+    go("s2");
+  }
 }
 
 function finalizar(){
@@ -335,7 +323,12 @@ function finalizar(){
   ST.elegible=document.getElementById("inp-elegible").value.trim();
   ST.gap=document.getElementById("inp-gap").value.trim();
   ST.convoc=document.getElementById("inp-convoc").value.trim();
-  ST.respBarreras=barrerasRespondidas;
+  var rb={};
+  BARRERAS.forEach(function(item,i){
+    var el=document.getElementById("bar-"+i);
+    if(el)rb[item.b]=el.value.trim();
+  });
+  ST.respBarreras=rb;
   var fn=ST.name.split(" ")[0];
   document.getElementById("gnombre").textContent="¡Misión cumplida, "+fn+"!";
   go("s6");
@@ -349,147 +342,16 @@ function finalizar(){
     ficha_motivacion:ST.motiv,
     ficha_barreras:ST.barreras,
     ficha_elegibilidad:ST.elegible,
-    mapa_barreras_acciones:JSON.stringify(rb),
+    mapa_barreras:JSON.stringify(rb),
     gap_equipo:ST.gap,
     problema_convocatoria:ST.convoc
   }).then(function(d){console.log("M3 guardada:",d.id);}).catch(function(e){console.error("Error M3:",e);});
 }
 
-// ── RULETA ──────────────────────────────────────────────
-var BARRERAS_RULETA=[
-  "Transporte lejano o muy costoso",
-  "Cuida a familiares en casa",
-  "Trabaja informalmente y no puede faltar",
-  "No ve utilidad en la formación",
-  "Vergüenza o miedo al fracaso",
-  "Falta de documentos o requisitos",
-  "Desconfianza en el programa",
-  "Presión familiar para trabajar ya"
-];
-var COLORES_RULETA=["#534AB7","#7B2FBE","#B97FFF","#534AB7","#9B59E8","#7B2FBE","#B97FFF","#534AB7"];
-var ruletaAngulo=0;
-var ruletaGirando=false;
-var barrerasRespondidas={};
-
-function dibujarRuleta(angulo){
-  var canvas=document.getElementById("ruletaCanvas");
-  if(!canvas)return;
-  var ctx=canvas.getContext("2d");
-  var cx=110,cy=110,r=108;
-  var n=BARRERAS_RULETA.length;
-  var slice=(2*Math.PI)/n;
-  ctx.clearRect(0,0,220,220);
-  for(var i=0;i<n;i++){
-    var start=angulo+i*slice;
-    var end=start+slice;
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,start,end);
-    ctx.closePath();
-    ctx.fillStyle=COLORES_RULETA[i%COLORES_RULETA.length];
-    ctx.fill();
-    ctx.strokeStyle="#0A0A0F";
-    ctx.lineWidth=2;
-    ctx.stroke();
-    // Text
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(start+slice/2);
-    ctx.textAlign="right";
-    ctx.fillStyle="#fff";
-    ctx.font="bold 10px Inter,sans-serif";
-    var words=BARRERAS_RULETA[i].split(" ");
-    var line="",lines=[],maxW=70;
-    words.forEach(function(w){
-      var test=line?line+" "+w:w;
-      if(ctx.measureText(test).width>maxW&&line){lines.push(line);line=w;}
-      else line=test;
-    });
-    lines.push(line);
-    var lineH=12;
-    var startY=-(lines.length-1)*lineH/2;
-    lines.forEach(function(l,li){ctx.fillText(l,r-8,startY+li*lineH+4);});
-    ctx.restore();
-  }
-  // Centro
-  ctx.beginPath();
-  ctx.arc(cx,cy,18,0,2*Math.PI);
-  ctx.fillStyle="#FFD700";
-  ctx.fill();
-  ctx.strokeStyle="#0A0A0F";
-  ctx.lineWidth=3;
-  ctx.stroke();
-  ctx.fillStyle="#0A0A0F";
-  ctx.font="bold 10px Bangers,cursive";
-  ctx.textAlign="center";
-  ctx.fillText("CNJ",cx,cy+4);
-}
-
-function girarRuleta(){
-  if(ruletaGirando)return;
-  ruletaGirando=true;
-  document.getElementById("btnGirar").disabled=true;
-  document.getElementById("barrera-activa").style.display="none";
-  var vueltasExtra=Math.floor(Math.random()*3)+4;
-  var anguloExtra=Math.random()*2*Math.PI;
-  var totalGiro=vueltasExtra*2*Math.PI+anguloExtra;
-  var duracion=3000;
-  var inicio=null;
-  var anguloInicial=ruletaAngulo;
-  function animar(ts){
-    if(!inicio)inicio=ts;
-    var prog=(ts-inicio)/duracion;
-    if(prog>=1){prog=1;}
-    var ease=1-Math.pow(1-prog,4);
-    ruletaAngulo=anguloInicial+totalGiro*ease;
-    dibujarRuleta(-ruletaAngulo);
-    if(prog<1){requestAnimationFrame(animar);}
-    else{
-      ruletaGirando=false;
-      document.getElementById("btnGirar").disabled=false;
-      mostrarBarreraActiva();
-    }
-  }
-  requestAnimationFrame(animar);
-}
-
-function mostrarBarreraActiva(){
-  var n=BARRERAS_RULETA.length;
-  var slice=(2*Math.PI)/n;
-  var angNorm=((ruletaAngulo%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
-  var idx=Math.floor(((2*Math.PI-angNorm)%(2*Math.PI))/slice)%n;
-  var barrera=BARRERAS_RULETA[idx];
-  document.getElementById("barrera-texto").textContent=barrera;
-  document.getElementById("inp-barrera-resp").value="";
-  document.getElementById("inp-barrera-resp").dataset.barrera=barrera;
-  document.getElementById("barrera-activa").style.display="block";
-  document.getElementById("barrera-activa").scrollIntoView({behavior:"smooth",block:"nearest"});
-}
-
-function guardarRespuestaBarrera(){
-  var barrera=document.getElementById("inp-barrera-resp").dataset.barrera;
-  var resp=document.getElementById("inp-barrera-resp").value.trim();
-  if(!resp||!barrera)return;
-  barrerasRespondidas[barrera]=resp;
-  document.getElementById("barrera-activa").style.display="none";
-  // Show saved responses
-  var cont=document.getElementById("respuestas-guardadas");
-  cont.innerHTML="";
-  Object.keys(barrerasRespondidas).forEach(function(b){
-    var d=document.createElement("div");
-    d.style.cssText="background:rgba(83,74,183,.1);border:1px solid var(--purple3);border-radius:8px;padding:.6rem .75rem;margin-bottom:6px";
-    d.innerHTML="<div style='font-family:Bangers,cursive;font-size:11px;color:var(--gold);letter-spacing:.5px;margin-bottom:2px'>"+b+"</div><div style='font-size:12px;color:var(--white);font-family:Inter,sans-serif;line-height:1.5'>"+barrerasRespondidas[b]+"</div>";
-    cont.appendChild(d);
-  });
-}
-
-// Inicializar ruleta
-window.addEventListener("load",function(){dibujarRuleta(0);});
-// ── FIN RULETA ──────────────────────────────────────────
-
 function copyCod(){
   navigator.clipboard.writeText("GUARDIAN19").then(function(){
-    var b=document.getElementById("copyBtn");b.textContent="✅ COPIADO";
+    var b=document.getElementById("copyBtn");
+    b.textContent="✅ COPIADO";
     setTimeout(function(){b.textContent="📋 COPIAR CÓDIGO";},2000);
   }).catch(function(){alert("Código: GUARDIAN19");});
 }
